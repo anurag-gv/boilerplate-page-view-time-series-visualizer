@@ -28,25 +28,39 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = df.resample('MS').sum()
+    df_bar = df.resample('MS').mean()
+    missing = pd.date_range('2016-01-01', '2016-04-01', freq='MS')
+    fill = pd.DataFrame(index=missing)
+    fill['value'] = np.nan
+    df_bar = pd.concat([df_bar, fill]).sort_index()
     df_bar['month'] = pd.Categorical(df_bar.index.month, categories=range(1,13), ordered=True)
     df_bar['year'] = df_bar.index.year
+    df_bar = df_bar.pivot(index='year', columns='month', values='value')
 
     # Draw bar plot
-    fig = sns.catplot(data = df_bar, x='year', y='value', kind='bar', hue='month', palette='muted', height=7, aspect=1, width=0.7)
-    fig._legend.remove()
-    ax = fig.ax
-    handles, labels = ax.get_legend_handles_labels()
-    month_labels = [calendar.month_name[int(label)] for label in labels]
-    ax.legend(handles=handles, labels=month_labels, title='Month')
-    fig.set_axis_labels("Years", "Average Page Views")
-    plt.ticklabel_format(style='plain', axis='y')
-    ax.spines['top'].set_visible(True)
-    ax.spines['right'].set_visible(True)
-
-    bar_count = len([bar for bar in ax.patches if bar.get_height() > 0])
-    print(f'Number of bars: {bar_count}')   
-
+    fig, ax = plt.subplots(figsize=(14, 6))
+    width = 0.5  # width of a single bar
+    n_months = 12
+    x = np.arange(len(df_bar.index))  # one position per year
+    fig, ax = plt.subplots(figsize=(14, 6))
+    width = 0.7  # width of a single bar (the year-bar; monthly=yearly/12)
+    n_months = 12
+    x = np.arange(len(df_bar.index))  # one position per year
+    cmap = plt.get_cmap('tab20', n_months)
+    for i, month in enumerate(df_bar.columns):
+        ax.bar(
+            x + (i - n_months / 2) * (width / n_months),  # shift bars within group
+            df_bar[month],
+            width=width / n_months,
+            color=cmap(i),
+            label=calendar.month_name[month]
+        )
+    ax.set_xticks(x)
+    ax.set_xticklabels(df_bar.index)
+    ax.set_xlabel('Year')
+    ax.set_ylabel('Average Page Views')
+    ax.legend(title='Month', loc='upper left', bbox_to_anchor=(0.01, 0.99))
+    
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
     return fig
