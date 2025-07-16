@@ -26,13 +26,21 @@ def draw_line_plot():
 
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
-    df_bar = None
+    df_bar = df.resample('MS').sum()
+    df_bar['month'] = df_bar.index.month
+    df_bar['year'] = df_bar.index.year
 
     # Draw bar plot
-
-
-
-
+    fig = sns.catplot(data = df_bar, x='year', y='value', kind='bar', hue='month', palette='muted', height=7, aspect=1, width=0.7)
+    fig._legend.remove()
+    ax = fig.ax
+    handles, labels = ax.get_legend_handles_labels()
+    month_labels = [calendar.month_name[int(label)] for label in labels]
+    ax.legend(handles=handles, labels=month_labels, title='Month')
+    fig.set_axis_labels("Years", "Average Page Views")
+    plt.ticklabel_format(style='plain', axis='y')
+    ax.spines['top'].set_visible(True)
+    ax.spines['right'].set_visible(True)
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
