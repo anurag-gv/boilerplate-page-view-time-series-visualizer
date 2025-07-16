@@ -29,7 +29,7 @@ def draw_line_plot():
 def draw_bar_plot():
     # Copy and modify data for monthly bar plot
     df_bar = df.resample('MS').sum()
-    df_bar['month'] = df_bar.index.month
+    df_bar['month'] = pd.Categorical(df_bar.index.month, categories=range(1,13), ordered=True)
     df_bar['year'] = df_bar.index.year
 
     # Draw bar plot
@@ -43,6 +43,9 @@ def draw_bar_plot():
     plt.ticklabel_format(style='plain', axis='y')
     ax.spines['top'].set_visible(True)
     ax.spines['right'].set_visible(True)
+
+    bar_count = len([bar for bar in ax.patches if bar.get_height() > 0])
+    print(f'Number of bars: {bar_count}')   
 
     # Save image and return fig (don't change this part)
     fig.savefig('bar_plot.png')
