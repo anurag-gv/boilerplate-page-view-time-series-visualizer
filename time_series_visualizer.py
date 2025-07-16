@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import numpy as np
 import calendar
 
 from pandas.plotting import register_matplotlib_converters
