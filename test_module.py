@@ -35,7 +35,7 @@ class LinePlotTestCase(unittest.TestCase):
 class BarPlotTestCase(unittest.TestCase):
     def setUp(self):
         self.fig = time_series_visualizer.draw_bar_plot()
-        self.ax = self.fig.axes[0]
+        self.ax = self.fig.axes[0,0]
 
     def test_bar_plot_legend_labels(self):
         actual = []
