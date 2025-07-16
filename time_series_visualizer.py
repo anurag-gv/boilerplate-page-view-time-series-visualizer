@@ -58,7 +58,7 @@ def draw_bar_plot():
         )
     ax.set_xticks(x)
     ax.set_xticklabels(df_bar.index)
-    ax.set_xlabel('Year')
+    ax.set_xlabel('Years')
     ax.set_ylabel('Average Page Views')
     ax.legend(title='Month', loc='upper left', bbox_to_anchor=(0.01, 0.99))
     
